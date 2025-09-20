@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Quiz App</title>
+  <style>
+    /* Global styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* Quiz container */
+    .quiz-container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s ease;
+    }
+
+    /* Animated background glow */
+    .quiz-container::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
+      background-size: 400% 400%;
+      animation: animateBG 15s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes animateBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .option {
+      background: #f4f4f4;
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s all;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hover effect with animation */
+    .option:hover {
+      transform: translateX(10px);
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      color: #fff;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Selected option style */
+    .selected {
+      background: #ffdd59 !important;
+      color: #333;
+      font-weight: bold;
+    }
+
+    #submit {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      background: #ff6b6b;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #submit:hover {
+      background: #ee5253;
+      transform: scale(1.05);
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Question text</h2>
+    <div id="options"></div>
+    <button id="submit">Submit</button>
+    <p id="score"></p>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "London"],
+        answer: "Paris"
+      },
+      {
+        question: "Which language runs in a web browser?",
+        options: ["Java", "C", "Python", "JavaScript"],
+        answer: "JavaScript"
+      },
+      {
+        question: "What does CSS stand for?",
+        options: ["Central Style Sheets", "Cascading Style Sheets", "Cascading Simple Sheets", "Creative Style System"],
+        answer: "Cascading Style Sheets"
+      }
+    ];
+
+    let currentQuiz = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const submitBtn = document.getElementById("submit");
+    const scoreEl = document.getElementById("score");
+
+    function loadQuiz() {
+      const currentQuizData = quizData[currentQuiz];
+      questionEl.innerText = currentQuizData.question;
+      optionsEl.innerHTML = "";
+      currentQuizData.options.forEach(option => {
+        const div = document.createElement("div");
+        div.classList.add("option");
+        div.innerText = option;
+        div.onclick = () => selectOption(div);
+        optionsEl.appendChild(div);
+      });
+    }
+
+    let selectedOption = null;
+    function selectOption(optionDiv) {
+      document.querySelectorAll(".option").forEach(opt => opt.classList.remove("selected"));
+      optionDiv.classList.add("selected");
+      selectedOption = optionDiv.innerText;
+    }
+
+    submitBtn.addEventListener("click", () => {
+      if (!selectedOption) return alert("Please select an option!");
+      if (selectedOption === quizData[currentQuiz].answer) score++;
+      currentQuiz++;
+      selectedOption = null;
+      if (currentQuiz < quizData.length) {
+        loadQuiz();
+      } else {
+        questionEl.innerText = "🎉 Quiz Completed!";
+        optionsEl.innerHTML = "";
+        submitBtn.style.display = "none";
+        scoreEl.innerText = `Your Score: ${score} / ${quizData.length}`;
+      }
+    });
+
+    loadQuiz();
+  </script>
+</body>
+</html>
